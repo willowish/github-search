@@ -1,14 +1,13 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import styles from './app.module.css';
-import NxWelcome from './nx-welcome';
+import { ChakraProvider } from '@chakra-ui/react';
+import { Navbar } from 'src/app/components/navbar/navbar';
 
 export function App() {
   return (
-    <>
-      <NxWelcome title="github-users" />
-      <div />
-    </>
+    <ChakraProvider>
+      <Navbar/>
+    </ChakraProvider>
   );
 }
 
 export default App;
+
