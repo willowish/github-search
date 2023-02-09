@@ -18,13 +18,22 @@ export const RepositoryList: React.FC<Props> = ({ userLogin }) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(fetchRepositoriesByLogin({ login: userLogin, page: 1 }));
+    const shouldFetchInitialData = !pagination;
+    shouldFetchInitialData && dispatch(fetchRepositoriesByLogin({ login: userLogin, page: 1 }));
   }, []);
 
   const loadNextPage = useCallback(() => {
-    console.log(pagination.page);
     dispatch(fetchRepositoriesByLogin({ login: userLogin, page: pagination.page + 1 }));
   }, [pagination])
+
+  // lack of pagination indicates that we are still loading data
+  if (!pagination) {
+    return (
+      <Center>
+        <Spinner />
+      </Center>
+    );
+  }
 
   if (repositories.length === 0) {
     return (
@@ -35,7 +44,7 @@ export const RepositoryList: React.FC<Props> = ({ userLogin }) => {
   }
 
   return (
-    <Flex flexDir={'column'} pl={2} maxH={500} overflow={'auto'} gap={3}>
+    <Flex flexDir={'column'} pl={2} maxH={500} pr={1} overflowY={'auto'} gap={3}>
       <InfiniteScroll
         pageStart={0}
         loadMore={loadNextPage}

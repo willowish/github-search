@@ -1,19 +1,22 @@
 import { createEntityAdapter, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { LoadingStatus } from 'src/app/model/loadingStatus.model';
+import { Pagination } from 'src/app/model/pagination.model';
 import { User } from 'src/app/model/users.model';
 import { fetchRepositoriesByLogin } from 'src/app/store/repositories/repositories.thunk';
 import { RootState } from 'src/app/store/store';
 import { fetchUsersByLogin } from 'src/app/store/users/users.thunk';
 
 const usersAdapter = createEntityAdapter<User>();
-type Pagination = {
-  page: number;
-  hasMore: boolean;
+
+type UserSliceState = {
+  pagination: Record<string, Pagination>;
+  loadingStatus: LoadingStatus;
+  searchTerm: string;
 };
-type CustomState = {
-  pagination: Record<string, Pagination>
-};
-const initialState = usersAdapter.getInitialState<CustomState>({
-  pagination: {}
+const initialState = usersAdapter.getInitialState<UserSliceState>({
+  pagination: {},
+  loadingStatus: LoadingStatus.IDLE,
+  searchTerm: '',
 });
 
 const usersSlice = createSlice({
@@ -22,7 +25,16 @@ const usersSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(fetchUsersByLogin.pending, (state, action) => {
+        state.loadingStatus = LoadingStatus.LOADING;
+        state.searchTerm = action.meta.arg;
+      });
+    builder.addCase(fetchUsersByLogin.rejected, (state) => {
+      state.loadingStatus = LoadingStatus.FAILED;
+    });
+    builder
       .addCase(fetchUsersByLogin.fulfilled, (state, action: PayloadAction<User[]>) => {
+        state.loadingStatus = LoadingStatus.SUCCEEDED;
         usersAdapter.setAll(state, action.payload);
       });
     builder

@@ -29,17 +29,3 @@ export const User: React.FC<Props> = ({ user }) => {
     );
   }
 ;
-
-
-//
-// <h2>
-//   <AccordionButton>
-//     <Box as="span" flex="1" textAlign="left">
-//       {user.login}
-//     </Box>
-//     <AccordionIcon />
-//   </AccordionButton>
-// </h2>
-// <AccordionPanel pb={4}>
-//   <RepositoryList userLogin={user.login} />
-// </AccordionPanel>
