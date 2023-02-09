@@ -7,20 +7,39 @@ import { User as UserModel } from 'src/app/model/users.model';
 type Props = {
   user: UserModel;
 };
-export const User: React.FC<Props> = ({user}) => {
-  return (
-    <AccordionItem>
-      <h2>
-        <AccordionButton>
-          <Box as="span" flex='1' textAlign='left'>
-            {user.login}
-          </Box>
-          <AccordionIcon />
-        </AccordionButton>
-      </h2>
-      <AccordionPanel pb={4}>
-        <RepositoryList userLogin={user.login}/>
-      </AccordionPanel>
-    </AccordionItem>
-  );
-};
+export const User: React.FC<Props> = ({ user }) => {
+    return (
+      <AccordionItem>
+        {({ isExpanded }) => (
+          <>
+            <h2>
+              <AccordionButton>
+                <Box as="span" flex="1" textAlign="left">
+                  {user.login}
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+            </h2>
+            <AccordionPanel pb={4}>
+              {isExpanded && <RepositoryList userLogin={user.login} />}
+            </AccordionPanel>
+          </>
+        )}
+      </AccordionItem>
+    );
+  }
+;
+
+
+//
+// <h2>
+//   <AccordionButton>
+//     <Box as="span" flex="1" textAlign="left">
+//       {user.login}
+//     </Box>
+//     <AccordionIcon />
+//   </AccordionButton>
+// </h2>
+// <AccordionPanel pb={4}>
+//   <RepositoryList userLogin={user.login} />
+// </AccordionPanel>

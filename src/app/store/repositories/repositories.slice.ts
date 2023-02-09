@@ -13,7 +13,7 @@ const repositoriesSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchRepositoriesByLogin.fulfilled, (state, action: PayloadAction<{data: Repository[], login: string}>) => {
-        repositoryAdapter.setAll(state, action.payload.data.map((repository) => ({...repository, ownerLogin: action.payload.login})));
+        repositoryAdapter.addMany(state, action.payload.data.map((repository) => ({...repository, ownerLogin: action.payload.login})));
       });
   }
 });
