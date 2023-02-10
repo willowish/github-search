@@ -6,7 +6,19 @@
 
 ## Development server
 
-Run `nx serve github-users` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
+If you don't have NX installed globally you might have to use "yarn nx" or "npx nx" to execute commands in the workspace.
+Run "yarn global add nx" or "npm install -g nx" to be able to execute command directly.
+
+In order to run it locally you need to create a .env file in the root of the project with the following content:
+
+```
+VITE_GITHUB_TOKEN="YOUR_GITHUB_TOKEN"
+VITE_GITHUB_API_URL="https://api.github.com/"
+```
+
+There is already a .env.example file in the root of the project, you can use it as a template.
+
+Run `nx serve` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
 
 ## Understand this workspace
 
