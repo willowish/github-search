@@ -1,8 +1,10 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import { Center, Flex, Spinner } from '@chakra-ui/react';
+import { Center, Flex, Spinner, useToast } from '@chakra-ui/react';
+import { Action } from '@reduxjs/toolkit';
 import InfiniteScroll from 'react-infinite-scroller';
 import { Repository } from 'src/app/components/mainPage/components/usersList/components/components/repository';
+import { LoadingStatus } from 'src/app/model/loadingStatus.model';
 import { selectRepositoriesByLogin } from 'src/app/store/repositories/repositories.slice';
 import { fetchRepositoriesByLogin } from 'src/app/store/repositories/repositories.thunk';
 import { useAppDispatch, useAppSelector } from 'src/app/store/store';
@@ -13,21 +15,45 @@ type Props = {
 };
 
 export const RepositoryList: React.FC<Props> = ({ userLogin }) => {
+  const [loadingStatus, setLoadingStatus] = useState(LoadingStatus.LOADING);
+
   const pagination = useAppSelector((state) => selectPaginationForUser(userLogin)(state));
   const repositories = useAppSelector((state) => selectRepositoriesByLogin(userLogin)(state));
   const dispatch = useAppDispatch();
+  const toast = useToast();
+
+  const checkForActionFail = (action: Action): void => {
+    if (action.type === fetchRepositoriesByLogin.rejected.toString()) {
+      const id = `fetchRepositoriesByLogin.failed${userLogin}`;
+      !toast.isActive(id) && toast({
+        id,
+        title: `Unable to fetch repositories for ${userLogin}`,
+        position: 'bottom',
+        status: 'error',
+        isClosable: true,
+      });
+      setLoadingStatus(LoadingStatus.FAILED);
+    } else {
+      setLoadingStatus(LoadingStatus.SUCCEEDED);
+    }
+  };
 
   useEffect(() => {
-    const shouldFetchInitialData = !pagination;
-    shouldFetchInitialData && dispatch(fetchRepositoriesByLogin({ login: userLogin, page: 1 }));
+    !pagination && dispatch(fetchRepositoriesByLogin({
+      login: userLogin,
+      page: 1,
+    })).then(checkForActionFail);
   }, []);
 
+
   const loadNextPage = useCallback(() => {
-    dispatch(fetchRepositoriesByLogin({ login: userLogin, page: pagination.page + 1 }));
+    setLoadingStatus(LoadingStatus.LOADING);
+    dispatch(
+      fetchRepositoriesByLogin({ login: userLogin, page: pagination.page + 1 })
+    ).then(checkForActionFail);
   }, [pagination])
 
-  // lack of pagination indicates that we are still loading data
-  if (!pagination) {
+  if (loadingStatus === LoadingStatus.LOADING && !repositories.length) {
     return (
       <Center>
         <Spinner />
@@ -38,7 +64,11 @@ export const RepositoryList: React.FC<Props> = ({ userLogin }) => {
   if (repositories.length === 0) {
     return (
       <Center>
-        No repositories found
+        {
+          loadingStatus === LoadingStatus.FAILED
+            ? 'Unable to fetch repositories'
+            : 'No repositories found'
+        }
       </Center>
     );
   }
@@ -48,7 +78,7 @@ export const RepositoryList: React.FC<Props> = ({ userLogin }) => {
       <InfiniteScroll
         pageStart={0}
         loadMore={loadNextPage}
-        hasMore={pagination.hasMore}
+        hasMore={pagination.hasMore && loadingStatus === LoadingStatus.SUCCEEDED}
         loader={<Center><Spinner /></Center>}
         useWindow={false}
       >

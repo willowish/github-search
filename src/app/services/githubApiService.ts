@@ -15,8 +15,15 @@ export const GithubApiService = {
   },
   fetchUserRepos: async (login: string, page: number, responsesPerPage: number): Promise<Repository[]> => {
     const url = `${BASE_URL}users/${login}/repos?page=${page}&per_page=${responsesPerPage}`;
+    try {
+      const response = await fetch(url, { headers });
 
-    const response = await fetch(url, { headers });
-    return response.json();
+      if (!response.ok) {
+        throw Error('Error while fetching data');
+      }
+      return response.json();
+    } catch (error) {
+      throw Error('Error while fetching data');
+    }
   }
 };

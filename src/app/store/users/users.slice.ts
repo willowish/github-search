@@ -41,7 +41,7 @@ const usersSlice = createSlice({
       .addCase(fetchRepositoriesByLogin.fulfilled, (state, action: PayloadAction<{page: number; login: string, hasMore: boolean}>) => {
         state.pagination[action.payload.login] = {
           page: action.payload.page,
-          hasMore: action.payload.hasMore
+          hasMore: action.payload.hasMore,
         };
       });
   }
