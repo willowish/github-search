@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Flex, Text } from '@chakra-ui/react';
 import { Repository as RepositoryModel } from 'src/app/model/repository.model';
 import { getCompactValue } from 'src/app/utils/getCompactValue';
 
@@ -20,7 +20,7 @@ export const Repository: React.FC<Props> = ({ repository }) => {
       gap={1}
     >
       <Flex w="100%" justifyContent={'space-between'} alignItems={'center'}>
-        <Box fontWeight={'semibold'}>{repository.name}</Box>
+        <Text isTruncated fontWeight={'semibold'} mr={1}>{repository.name}</Text>
         <Flex gap={1} alignSelf={'flex-end'} alignItems={'center'} fontSize={'0.9em'}>
           <Text fontWeight={'semibold'}>{getCompactValue(repository.stargazers_count)}</Text>
           <Text fontSize={'1.5em'}>&#9733;</Text>

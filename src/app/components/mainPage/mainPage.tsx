@@ -12,7 +12,7 @@ export const MainPage: React.FC = () => {
     >
       <Flex
         flexDir={'column'}
-        w={['320px', '640px', '800px']}
+        w={['320px','480px', '640px', '800px']}
       >
         <UsersSearch />
         <UsersList />
